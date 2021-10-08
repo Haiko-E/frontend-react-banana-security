@@ -1,28 +1,31 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import Profile from './pages/Profile';
 import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
+import PrivateRoute from './components/PrivateRoute';
 import './App.css';
+import { AuthContext } from './context/AuthContext';
 
 function App() {
+  const { isAuth } = useContext(AuthContext);
   return (
     <>
       <NavBar />
-      <div className="content">
+      <div className='content'>
         <Switch>
-          <Route exact path="/">
+          <Route exact path='/'>
             <Home />
           </Route>
-          <Route path="/profile">
+          <PrivateRoute isAuth={isAuth} path='/profile'>
             <Profile />
-          </Route>
-          <Route exact path="/signin">
+          </PrivateRoute>
+          <Route exact path='/signin'>
             <SignIn />
           </Route>
-          <Route exact path="/signup">
+          <Route exact path='/signup'>
             <SignUp />
           </Route>
         </Switch>
