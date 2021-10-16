@@ -4,11 +4,13 @@ import { useHistory } from 'react-router';
 import jwt_decode from 'jwt-decode';
 import tokenChecker from '../helper/tokenChecker';
 
+// custom hook voor het fetchen van data
 const useUserData = () => {
   const [usersData, setUserData] = useState('');
   const history = useHistory();
   const source = axios.CancelToken.source();
 
+  // fetch data functie
   async function fetchUserData(id, token) {
     try {
       const userdata = await axios.get(`http://localhost:3000/600/users/${id}`, {
@@ -31,6 +33,7 @@ const useUserData = () => {
     }
   }
 
+  // persist on refresh
   useEffect(() => {
     const token = localStorage.getItem('token');
 
@@ -43,7 +46,6 @@ const useUserData = () => {
         setUserData({ isAuth: false, status: 'done', user: null });
       }
     } else {
-      console.log('custom hook load in use effect');
       setUserData({ isAuth: false, status: 'done', user: null });
     }
     return function cleanup() {
@@ -51,6 +53,7 @@ const useUserData = () => {
     };
   }, []);
 
+  // deze 2 items zijn te gebruiken in de useUserData hook
   return { usersData, fetchUserData };
 };
 

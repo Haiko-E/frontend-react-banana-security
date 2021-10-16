@@ -11,8 +11,10 @@ function AuthContextProvider({ children }) {
     status: 'pending',
   });
 
+  // custom hook
   const { fetchUserData, usersData } = useUserData();
 
+  //Login functie
   const login = (result) => {
     const token = result.data.accessToken;
     const decodedToken = jwt_decode(token);
@@ -23,11 +25,13 @@ function AuthContextProvider({ children }) {
     setIsAuth(usersData);
   };
 
+  //Logout functie
   const logout = () => {
     setIsAuth({ ...isAuth, isAuth: false, user: null });
     localStorage.clear();
   };
 
+  // wanneer userdata verander, vernieuw het naar de nieuwe gebruiker
   useEffect(() => {
     setIsAuth(usersData);
   }, [usersData]);
@@ -42,7 +46,7 @@ function AuthContextProvider({ children }) {
         logout: logout,
       }}
     >
-      {isAuth.status === 'done' ? children : 'loading....'}
+      {isAuth.status === 'pending' ? <p>Loading...</p> : children}
     </AuthContext.Provider>
   );
 }
