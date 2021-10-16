@@ -1,42 +1,48 @@
-import React, { useState, createContext } from 'react';
-import { useHistory } from 'react-router';
+import React, { useState, createContext, useEffect } from 'react';
+import jwt_decode from 'jwt-decode';
+import useUserData from '../hooks/useUserData';
 
 export const AuthContext = createContext({});
 
 function AuthContextProvider({ children }) {
   const [isAuth, setIsAuth] = useState({
     isAuth: false,
-    user: '',
+    user: { username: '', email: '' },
+    status: 'pending',
   });
-  const history = useHistory();
 
-  const login = (e) => {
-    e.preventDefault();
-    const value = e.target[0].value;
+  const { fetchUserData, usersData } = useUserData();
 
-    setIsAuth(() => {
-      return { user: value, isAuth: true };
-    });
-    history.push('/profile');
+  const login = (result) => {
+    const token = result.data.accessToken;
+    const decodedToken = jwt_decode(token);
+
+    localStorage.setItem('token', token);
+
+    fetchUserData(decodedToken.sub, token);
+    setIsAuth(usersData);
   };
-  console.log(isAuth);
 
   const logout = () => {
-    setIsAuth((prev) => {
-      return { ...prev, isAuth: false };
-    });
+    setIsAuth({ ...isAuth, isAuth: false, user: null });
+    localStorage.clear();
   };
+
+  useEffect(() => {
+    setIsAuth(usersData);
+  }, [usersData]);
 
   return (
     <AuthContext.Provider
       value={{
         user: isAuth.user,
+        setIsAuth: isAuth.setIsAuth,
         isAuth: isAuth.isAuth,
         login: login,
         logout: logout,
       }}
     >
-      {children}
+      {isAuth.status === 'done' ? children : 'loading....'}
     </AuthContext.Provider>
   );
 }

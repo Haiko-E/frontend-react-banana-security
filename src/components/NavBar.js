@@ -15,7 +15,7 @@ function NavBar() {
           <h3>Banana Security</h3>
         </span>
       </Link>
-      {isAuth && <span>{user}</span>}
+      {isAuth && <span>{user.username}</span>}
       {!isAuth && (
         <div>
           <button
@@ -44,3 +44,4 @@ function NavBar() {
 }
 
 export default NavBar;
+
